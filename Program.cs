@@ -49,11 +49,7 @@ namespace Task_30
             get
             {
                 return _name;
-            }
-            set
-            {
-
-            }
+            }            
         }        
         public Player(string name, int level)
         {
@@ -65,9 +61,7 @@ namespace Task_30
 
     class DataBase
     {
-        
         private List<Player> players = new List<Player>();
-
         public void AddPlayer()
         {
             Console.Write("Введите имя игрока : ");
