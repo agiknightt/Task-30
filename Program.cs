@@ -21,10 +21,10 @@ namespace Task_30
                         dataBase.AddPlayer();
                         break;
                     case 2:
-                        dataBase.BanOrUnbanPlayer("забанен");
+                        dataBase.BanPlayer();
                         break;
                     case 3:
-                        dataBase.BanOrUnbanPlayer("разбанен");
+                        dataBase.UnbanPlayer();
                         break;
                     case 4:
                         dataBase.DeletePlayer();
@@ -43,7 +43,7 @@ namespace Task_30
     {
         private string _name;
         private int _level;
-        public bool IsBan;
+        private bool _isBan;
         public string Name
         {
             get
@@ -55,10 +55,18 @@ namespace Task_30
         {
             _name = name;
             _level = level;
-            IsBan = false;
+            _isBan = false;
+        }
+
+        public void BannedPlayer()
+        {
+            _isBan = true;
+        }
+        public void UnbannedPlayer()
+        {
+            _isBan = false;
         }
     }
-
     class DataBase
     {
         private List<Player> players = new List<Player>();
@@ -92,26 +100,39 @@ namespace Task_30
                 Console.WriteLine("Игрока с таким именем не существует");
             }
         }
-        public void BanOrUnbanPlayer(string text)
-        {  
+        public void BanPlayer()
+        {
+            int id = BanOrUnban("забанен");
+            if(id > -1)
+            {
+                players[id].BannedPlayer();
+            }
+        }
+        public void UnbanPlayer()
+        {
+            int id = BanOrUnban("разбанен");
+            if (id > -1)
+            {
+                players[id].UnbannedPlayer();
+            }
+        }
+
+        private int BanOrUnban(string text, int id = -1)
+        {
             Console.Write("Введите имя игрока : ");
             string name = Console.ReadLine();
-
             bool isFound = false;
-
             for (int i = 0; i < players.Count; i++)
             {
                 if (name == players[i].Name)
                 {
-                    players[i].IsBan = true;
                     Console.WriteLine($"Игрок под именем {players[i].Name}" + text);
-                    isFound = true;
+                    id = i;
+                    return id;
                 }
             }
-            if (isFound == false)
-            {
-                Console.WriteLine("Игрока с таким именем не существует");
-            }
+            Console.WriteLine("Игрока с таким именем не существует");
+            return id;
         }
     }
 }
