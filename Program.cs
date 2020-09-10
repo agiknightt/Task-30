@@ -7,8 +7,7 @@ namespace Task_30
     {
         static void Main(string[] args)
         {
-            List<Players> players = new List<Players>();
-
+            DataBase dataBase = new DataBase();
             bool enterOrExit = true;
 
             while (enterOrExit)
@@ -19,18 +18,16 @@ namespace Task_30
                 switch (Convert.ToInt32(Console.ReadLine()))
                 {
                     case 1:
-                        Players player = new Players(players.Count);
-                        
-                        players.Add(player);
+                        dataBase.AddPlayer();
                         break;
                     case 2:
-                        BanOrUnbanPlayer(players, "забанен", true);
+                        dataBase.BanOrUnbanPlayer("забанен");
                         break;
                     case 3:
-                         BanOrUnbanPlayer(players, "разбанен", false);
+                        dataBase.BanOrUnbanPlayer("разбанен");
                         break;
                     case 4:
-                        DeletePlayer(players);
+                        dataBase.DeletePlayer();
                         break;
                     case 5:
                         enterOrExit = false;
@@ -40,61 +37,87 @@ namespace Task_30
                 Console.ReadKey();
                 Console.Clear();
             }
-        }
-
-        static void BanOrUnbanPlayer(List<Players> players, string text, bool isBan)
+        }     
+    }
+    class Player
+    {
+        private string _name;
+        private int _level;
+        public bool IsBan;
+        public string Name
         {
-            int playerId;
-            Console.Write("Введите номер игрока : ");
-
-            playerId = Convert.ToInt32(Console.ReadLine());
-
-            if (playerId >= 0 && playerId <= players.Count - 1)
+            get
             {
-                players[playerId].IsBan = isBan;
-                Console.WriteLine($"Игрок под номером {playerId} " + text);
+                return _name;
             }
-            else
+            set
             {
-                Console.WriteLine("Игрока с таким номером не существует");
-            }
-        }
 
-        static void DeletePlayer(List<Players> players)
+            }
+        }        
+        public Player(string name, int level)
         {
-            int playerId;
-
-            Console.Write("Введите номер игрока : ");
-            playerId = Convert.ToInt32(Console.ReadLine());
-
-            if (playerId >= 0 && playerId <= players.Count)
-            {
-                players.RemoveAt(playerId);
-                Console.WriteLine($"Игрок под номером {playerId} удален.");
-            }
-            else
-            {
-                Console.WriteLine("Игрока с таким номером не существует");
-            }
+            _name = name;
+            _level = level;
+            IsBan = false;
         }
     }
-    class Players
+
+    class DataBase
     {
-        public int Id;
-        public string Name;
-        public int Level;
-        public bool IsBan;
         
-        public Players(int id)
+        private List<Player> players = new List<Player>();
+
+        public void AddPlayer()
         {
-            Id = id + 1;
-            IsBan = false;
-
             Console.Write("Введите имя игрока : ");
-            Name = Console.ReadLine();
-
+            string name = Console.ReadLine();
             Console.Write("Введите уровень игрока : ");
-            Level = Convert.ToInt32(Console.ReadLine());
+            int level = Convert.ToInt32(Console.ReadLine());
+            Player player = new Player(name, level);
+            players.Add(player);
+        }
+        public void DeletePlayer()
+        {
+            Console.Write("Введите имя игрока : ");
+            string name = Console.ReadLine();
+
+            bool isFound = false;
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                if(name == players[i].Name)
+                {
+                    players.RemoveAt(i);
+                    Console.WriteLine($"Выудалили игрока с именем : {players[i].Name}");
+                    isFound = true;
+                }
+            }
+            if(isFound == false)
+            {
+                Console.WriteLine("Игрока с таким именем не существует");
+            }
+        }
+        public void BanOrUnbanPlayer(string text)
+        {  
+            Console.Write("Введите имя игрока : ");
+            string name = Console.ReadLine();
+
+            bool isFound = false;
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (name == players[i].Name)
+                {
+                    players[i].IsBan = true;
+                    Console.WriteLine($"Игрок под именем {players[i].Name}" + text);
+                    isFound = true;
+                }
+            }
+            if (isFound == false)
+            {
+                Console.WriteLine("Игрока с таким именем не существует");
+            }
         }
     }
 }
